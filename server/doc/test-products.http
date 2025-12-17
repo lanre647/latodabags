@@ -1,6 +1,6 @@
 ### Base URL
 @baseUrl = http://localhost:5000/api/v1
-@adminToken = YOUR_ADMIN_TOKEN_HERE
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NDI4NTg2OTE4OTA5NmZjNzQwZmM2ZCIsImVtYWlsIjoiYWRtaW5AbGF0b2JhZ3MuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzY1OTY3OTkwLCJleHAiOjE3NjU5Njg4OTB9.wEJIB9kPmsU-2XwynDqyLgQ2FqOqpDRltxn8pHw71c8
 @productId = YOUR_PRODUCT_ID_HERE
 
 ### 1. Get All Products (Public)
@@ -23,7 +23,8 @@ GET {{baseUrl}}/products/category/tote?limit=10
 
 ### 7. Get Single Product (Public)
 GET {{baseUrl}}/products/{{productId}}
-
+### 7b. Get All Products Again (Public)
+GET {{baseUrl}}/products
 ### 8. Create Product - Simple Tote (Admin Only)
 POST {{baseUrl}}/products
 Authorization: Bearer {{adminToken}}
@@ -200,3 +201,23 @@ GET {{baseUrl}}/products?featured=true&limit=6
 
 ### 20. Sort Products by Price (Low to High)
 GET {{baseUrl}}/products?sort=basePrice&limit=20
+
+### 21. Create an Admin User (If not already created)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Admin User",
+  "email": "admin@latobags.com",
+  "password": "Admin123",
+  "phone": "08012345678"
+}
+
+### 22. Login as Admin User to Get Token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@latobags.com",
+  "password": "Admin123"
+}

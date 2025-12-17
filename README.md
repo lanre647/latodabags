@@ -24,6 +24,104 @@ A secure MERN stack e-commerce platform for on-demand handmade bags with Paystac
 - Paystack account (Nigerian payment gateway)
 - Cloudinary account (for image uploads)
 
+# Secure MERN E-commerce - Handmade Bags (Nigeria)
+
+## Project Structure
+
+```
+handmade-bags-ecommerce/
+├── client/                          # React frontend (create-react-app)
+│   ├── public/
+│   │   ├── index.html
+│   │   └── favicon.ico
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── auth/
+│   │   │   ├── bags/
+│   │   │   ├── cart/
+│   │   │   ├── checkout/
+│   │   │   └── common/
+│   │   ├── pages/
+│   │   │   ├── Home.js
+│   │   │   ├── BagDetails.js
+│   │   │   ├── Cart.js
+│   │   │   ├── Checkout.js
+│   │   │   ├── Login.js
+│   │   │   ├── Register.js
+│   │   │   └── Profile.js
+│   │   ├── services/
+│   │   │   ├── api.js
+│   │   │   ├── auth.js
+│   │   │   └── payment.js
+│   │   ├── context/
+│   │   │   ├── AuthContext.js
+│   │   │   └── CartContext.js
+│   │   ├── utils/
+│   │   │   └── validators.js
+│   │   ├── App.js
+│   │   └── index.js
+│   ├── .env
+│   ├── .env.example
+│   └── package.json
+│
+├── server/                          # Express backend
+│   ├── config/
+│   │   ├── db.js                   # MongoDB connection
+│   │   ├── env.js                  # Environment validation
+│   │   └── paystack.js             # Paystack configuration
+│   ├── middleware/
+│   │   ├── auth.js                 # JWT authentication
+│   │   ├── errorHandler.js         # Global error handler
+│   │   ├── rateLimiter.js          # Rate limiting
+│   │   ├── validation.js           # Request validation
+│   │   └── security.js             # Security headers
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── product.js
+│   │   ├── Order.js
+│   │   ├── Category.js
+│   │   └── Review.js
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── products.js
+│   │   ├── orders.js
+│   │   ├── users.js
+│   │   ├── categories.js
+│   │   └── payments.js
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   ├── productController.js
+│   │   ├── orderController.js
+│   │   ├── userController.js
+│   │   └── paymentController.js
+│   ├── services/
+│   │   ├── paystackService.js
+│   │   ├── emailService.js
+│   │   └── uploadService.js
+│   ├── utils/
+│   │   ├── logger.js
+│   │   ├── jwt.js
+│   │   └── validators.js
+│   ├── bin/
+│   │   └── www                     # Server startup script
+│   ├── .env
+│   ├── .env.example
+│   ├── server.js                   # Main app file
+│   └── package.json
+│
+├── .gitignore
+└── README.md
+```
+
+## Key Features
+
+- **Security**: Helmet, CORS (strict origins), rate limiting, JWT authentication
+- **Payment**: Paystack integration for Nigerian payments
+- **Database**: MongoDB Atlas with connection pooling and retry writes
+- **Logging**: Morgan HTTP request logger
+- **Validation**: Joi schema validation for environment and requests
+- **On-demand**: Custom handmade bag ordering system
+
 ## 🛠️ Installation
 
 ### 1. Clone the Repository

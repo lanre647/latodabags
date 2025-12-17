@@ -51,8 +51,8 @@ const customOptionSchema = Joi.object({
     .items(Joi.string().trim())
     .when('type', {
       is: Joi.valid('select', 'color'),
-      then: Joi.required().min(1),
-      otherwise: Joi.optional(),
+      then: Joi.array().min(1).required(),
+      otherwise: Joi.array().optional(),
     })
     .messages({
       'array.min': 'At least one option is required for select/color types',
