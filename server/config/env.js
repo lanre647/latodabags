@@ -45,27 +45,17 @@ const envSchema = Joi.object({
   
   // Email Configuration (Optional for development)
   EMAIL_HOST: Joi.string()
-    .when('NODE_ENV', {
-      is: 'production',
-      then: Joi.required(),
-      otherwise: Joi.optional()
-    }),
+    .allow('', null)
+    .optional(),
   EMAIL_PORT: Joi.number()
     .port()
     .default(587),
   EMAIL_USER: Joi.string()
-    .email()
-    .when('NODE_ENV', {
-      is: 'production',
-      then: Joi.required(),
-      otherwise: Joi.optional()
-    }),
+    .allow('', null)
+    .optional(),
   EMAIL_PASSWORD: Joi.string()
-    .when('NODE_ENV', {
-      is: 'production',
-      then: Joi.required(),
-      otherwise: Joi.optional()
-    }),
+    .allow('', null)
+    .optional(),
   EMAIL_FROM: Joi.string()
     .email()
     .default('noreply@handmadebags.ng'),
@@ -96,7 +86,7 @@ const envSchema = Joi.object({
 const { error, value: envVars } = envSchema.validate(process.env);
 
 if (error) {
-  throw new Error(`Environment validation error: ${error.message}`);
+  throw new Error('Environment validation error: ' + error.message);
 }
 
 // Export validated environment variables

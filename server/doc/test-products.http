@@ -1,0 +1,202 @@
+### Base URL
+@baseUrl = http://localhost:5000/api/v1
+@adminToken = YOUR_ADMIN_TOKEN_HERE
+@productId = YOUR_PRODUCT_ID_HERE
+
+### 1. Get All Products (Public)
+GET {{baseUrl}}/products
+
+### 2. Get Products with Filters (Public)
+GET {{baseUrl}}/products?category=tote&limit=12&page=1
+
+### 3. Get Products by Category (Public)
+GET {{baseUrl}}/products?category=sling&featured=true
+
+### 4. Search Products (Public)
+GET {{baseUrl}}/products?search=leather&minPrice=1000&maxPrice=5000
+
+### 5. Get Products with Pagination (Public)
+GET {{baseUrl}}/products?page=2&limit=6&sort=-basePrice
+
+### 6. Get Products by Category Route (Public)
+GET {{baseUrl}}/products/category/tote?limit=10
+
+### 7. Get Single Product (Public)
+GET {{baseUrl}}/products/{{productId}}
+
+### 8. Create Product - Simple Tote (Admin Only)
+POST {{baseUrl}}/products
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Classic Leather Tote",
+  "basePrice": 15000,
+  "images": [
+    "https://res.cloudinary.com/demo/image/upload/sample1.jpg",
+    "https://res.cloudinary.com/demo/image/upload/sample2.jpg"
+  ],
+  "description": "Handcrafted leather tote bag perfect for everyday use. Made from premium Nigerian leather with reinforced stitching and spacious interior.",
+  "category": "tote",
+  "featured": true
+}
+
+### 9. Create Product - Custom Sling with Options (Admin Only)
+POST {{baseUrl}}/products
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Custom Crossbody Sling Bag",
+  "basePrice": 12000,
+  "images": [
+    "https://res.cloudinary.com/demo/image/upload/sling1.jpg",
+    "https://res.cloudinary.com/demo/image/upload/sling2.jpg",
+    "https://res.cloudinary.com/demo/image/upload/sling3.jpg"
+  ],
+  "customOptions": [
+    {
+      "name": "size",
+      "type": "select",
+      "options": ["Small", "Medium", "Large"],
+      "priceModifier": 0
+    },
+    {
+      "name": "color",
+      "type": "select",
+      "options": ["Black", "Brown", "Tan", "Navy"],
+      "priceModifier": 0
+    },
+    {
+      "name": "strap_length",
+      "type": "select",
+      "options": ["Short (60cm)", "Medium (80cm)", "Long (100cm)"],
+      "priceModifier": 500
+    },
+    {
+      "name": "personalization",
+      "type": "text",
+      "priceModifier": 2000
+    }
+  ],
+  "description": "Stylish crossbody sling bag with customizable options. Choose your preferred size, color, strap length, and add personalized text embroidery.",
+  "category": "sling",
+  "featured": false
+}
+
+### 10. Create Product - Clutch Bag (Admin Only)
+POST {{baseUrl}}/products
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Evening Clutch Bag",
+  "basePrice": 8500,
+  "images": [
+    "https://res.cloudinary.com/demo/image/upload/clutch1.jpg"
+  ],
+  "customOptions": [
+    {
+      "name": "material",
+      "type": "select",
+      "options": ["Leather", "Suede", "Satin"],
+      "priceModifier": 1000
+    }
+  ],
+  "description": "Elegant evening clutch perfect for special occasions. Compact design with secure magnetic closure.",
+  "category": "clutch",
+  "featured": false
+}
+
+### 11. Update Product (Admin Only)
+PUT {{baseUrl}}/products/{{productId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "basePrice": 16000,
+  "featured": true,
+  "description": "Updated description with more details about the craftsmanship and materials used."
+}
+
+### 12. Update Product - Add Custom Options (Admin Only)
+PUT {{baseUrl}}/products/{{productId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "customOptions": [
+    {
+      "name": "size",
+      "type": "select",
+      "options": ["S", "M", "L"],
+      "priceModifier": 0
+    },
+    {
+      "name": "initials",
+      "type": "text",
+      "priceModifier": 1500
+    }
+  ]
+}
+
+### 13. Delete Product (Admin Only)
+DELETE {{baseUrl}}/products/{{productId}}
+Authorization: Bearer {{adminToken}}
+
+### 14. Test Validation - Missing Required Fields
+POST {{baseUrl}}/products
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Test",
+  "basePrice": 1000
+}
+
+### 15. Test Validation - Invalid Category
+POST {{baseUrl}}/products
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Invalid Category Bag",
+  "basePrice": 5000,
+  "images": ["https://example.com/image.jpg"],
+  "description": "This should fail due to invalid category",
+  "category": "invalid_category"
+}
+
+### 16. Test Validation - Negative Price
+POST {{baseUrl}}/products
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Negative Price Bag",
+  "basePrice": -1000,
+  "images": ["https://example.com/image.jpg"],
+  "description": "This should fail due to negative price",
+  "category": "tote"
+}
+
+### 17. Test Authorization - Create without Token (Should Fail)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "name": "Unauthorized Bag",
+  "basePrice": 5000,
+  "images": ["https://example.com/image.jpg"],
+  "description": "This should fail - no auth token",
+  "category": "tote"
+}
+
+### 18. Test MongoDB Injection Protection
+GET {{baseUrl}}/products?category[$ne]=tote
+
+### 19. Get Featured Products Only
+GET {{baseUrl}}/products?featured=true&limit=6
+
+### 20. Sort Products by Price (Low to High)
+GET {{baseUrl}}/products?sort=basePrice&limit=20

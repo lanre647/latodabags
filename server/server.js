@@ -96,8 +96,10 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API Routes (to be implemented)
-// app.use('/api/v1/auth', require('./routes/auth'));
+// API Routes - Mount auth routes
+app.use('/api/v1/auth', require('./routes/auth'));
+
+// Other routes (to be implemented)
 // app.use('/api/v1/bags', require('./routes/bags'));
 // app.use('/api/v1/orders', require('./routes/orders'));
 // app.use('/api/v1/users', require('./routes/users'));
