@@ -17,30 +17,32 @@ const app = express();
 connectDB();
 
 // Security Middleware - Helmet with custom configuration
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
+      },
     },
-  },
-  crossOriginEmbedderPolicy: false,
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-}));
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+);
 
 // CORS Configuration - Strict origins only
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
-    
+
     const allowedOrigins = [
       config.cors.origin,
       'http://localhost:3000', // Development
     ];
-    
+
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -90,7 +92,10 @@ app.get('/health', (req, res) => {
     environment: config.env,
     uptime: process.uptime(),
     database: {
-      status: require('mongoose').connection.readyState === 1 ? 'connected' : 'disconnected',
+      status:
+        require('mongoose').connection.readyState === 1
+          ? 'connected'
+          : 'disconnected',
       name: require('mongoose').connection.name,
     },
   });
@@ -101,10 +106,10 @@ app.use('/api/v1/auth', require('./routes/auth'));
 
 // Other routes (to be implemented)
 app.use('/api/v1/products', require('./routes/products'));
-// app.use('/api/v1/orders', require('./routes/orders'));
+app.use('/api/v1/orders', require('./routes/orders'));
+app.use('/api/v1/payment', require('./routes/payments'));
 // app.use('/api/v1/users', require('./routes/users'));
 // app.use('/api/v1/categories', require('./routes/categories'));
-// app.use('/api/v1/payments', require('./routes/payments'));
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -129,7 +134,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   console.error('Error:', err.message);
   console.error('Stack:', err.stack);
-  
+
   // CORS Error
   if (err.message === 'Not allowed by CORS') {
     return res.status(403).json({
@@ -138,17 +143,17 @@ app.use((err, req, res, next) => {
       error: config.env === 'development' ? err.message : undefined,
     });
   }
-  
+
   // Mongoose validation error
   if (err.name === 'ValidationError') {
-    const errors = Object.values(err.errors).map(e => e.message);
+    const errors = Object.values(err.errors).map((e) => e.message);
     return res.status(400).json({
       success: false,
       message: 'Validation Error',
       errors,
     });
   }
-  
+
   // Mongoose duplicate key error
   if (err.code === 11000) {
     const field = Object.keys(err.keyPattern)[0];
@@ -157,7 +162,7 @@ app.use((err, req, res, next) => {
       message: `${field} already exists`,
     });
   }
-  
+
   // JWT errors
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
@@ -165,14 +170,14 @@ app.use((err, req, res, next) => {
       message: 'Invalid token',
     });
   }
-  
+
   if (err.name === 'TokenExpiredError') {
     return res.status(401).json({
       success: false,
       message: 'Token expired',
     });
   }
-  
+
   // Default error
   res.status(err.statusCode || 500).json({
     success: false,

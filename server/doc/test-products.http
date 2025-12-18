@@ -1,7 +1,10 @@
 ### Base URL
 @baseUrl = http://localhost:5000/api/v1
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NDI4NTg2OTE4OTA5NmZjNzQwZmM2ZCIsImVtYWlsIjoiYWRtaW5AbGF0b2JhZ3MuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzY1OTY3OTkwLCJleHAiOjE3NjU5Njg4OTB9.wEJIB9kPmsU-2XwynDqyLgQ2FqOqpDRltxn8pHw71c8
-@productId = YOUR_PRODUCT_ID_HERE
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NDI4NTg2OTE4OTA5NmZjNzQwZmM2ZCIsImVtYWlsIjoiYWRtaW5AbGF0b2JhZ3MuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzY2MDUxNDc5LCJleHAiOjE3NjYwNTIzNzl9.f5xAXymPq8u84aUIb-11n9uyuz2lhNjtqmWFDATNJGY
+@productId = 6943cf63dcd4779bbdf423c0
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NDIwYzJiYTYzNDkzNGEyODdmYWY2ZSIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsInJvbGUiOiJidXllciIsImlhdCI6MTc2NjA1MTg5NSwiZXhwIjoxNzY2MDUyNzk1fQ.d3IR9PYCUEeETVmyGxN14AnysNbNii4KYqZ09bp6meQ
+
+@orderId = YOUR_ORDER_ID_HERE
 
 ### 1. Get All Products (Public)
 GET {{baseUrl}}/products
@@ -31,14 +34,14 @@ Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "name": "Classic Leather Tote",
-  "basePrice": 15000,
+  "name": "Modern Backpack",
+  "basePrice": 17000,
   "images": [
     "https://res.cloudinary.com/demo/image/upload/sample1.jpg",
     "https://res.cloudinary.com/demo/image/upload/sample2.jpg"
   ],
-  "description": "Handcrafted leather tote bag perfect for everyday use. Made from premium Nigerian leather with reinforced stitching and spacious interior.",
-  "category": "tote",
+  "description": "Handcrafted leather backpack perfect for everyday use. Made from premium Nigerian leather with reinforced stitching and spacious interior.",
+  "category": "backpack",
   "featured": true
 }
 
@@ -220,4 +223,325 @@ Content-Type: application/json
 {
   "email": "admin@latobags.com",
   "password": "Admin123"
+}
+
+
+
+## ---------------------------------------------------------------------
+
+### 1. Create Custom Order - Simple (No Custom Options)
+POST {{baseUrl}}/orders/custom
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "productId": "{{productId}}",
+  "customSpecs": {},
+  "etaDays": 14,
+  "shippingAddress": {
+    "street": "123 Lekki Phase 1",
+    "city": "Lagos",
+    "state": "Lagos",
+    "zipCode": "100001",
+    "country": "Nigeria",
+    "phone": "08012345678"
+  },
+  "notes": "Please use high-quality leather"
+}
+
+### 2. Create Custom Order - With Custom Specs
+POST {{baseUrl}}/orders/custom
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "productId": "{{productId}}",
+  "customSpecs": {
+    "size": "M",
+    "color": "Brown",
+    "strap_length": "Medium (80cm)",
+    "personalization": "JD"
+  },
+  "etaDays": 21,
+  "shippingAddress": {
+    "street": "45 Victoria Island",
+    "city": "Lagos",
+    "state": "Lagos",
+    "zipCode": "101001",
+    "country": "Nigeria",
+    "phone": "08098765432"
+  },
+  "notes": "Please embroider initials in gold thread"
+}
+
+### 3. Create Custom Order - Minimal (Uses user's saved address)
+POST {{baseUrl}}/orders/custom
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "productId": "{{productId}}",
+  "customSpecs": {
+    "size": "L"
+  },
+  "etaDays": 10
+}
+
+### 4. Get My Orders (User)
+GET {{baseUrl}}/orders/my
+Authorization: Bearer {{userToken}}
+
+### 5. Get My Orders - Filtered by Status
+GET {{baseUrl}}/orders/my?status=pending&page=1&limit=5
+Authorization: Bearer {{userToken}}
+
+### 6. Get My Orders - Sorted by Amount
+GET {{baseUrl}}/orders/my?sort=-totalAmount
+Authorization: Bearer {{userToken}}
+
+### 7. Get Single Order (User)
+GET {{baseUrl}}/orders/{{orderId}}
+Authorization: Bearer {{userToken}}
+
+### 8. Cancel Order (User - Only Pending Orders)
+PUT {{baseUrl}}/orders/{{orderId}}/cancel
+Authorization: Bearer {{userToken}}
+
+### 9. Get All Orders (Admin)
+GET {{baseUrl}}/orders/admin/all
+Authorization: Bearer {{adminToken}}
+
+### 10. Get All Orders - Filtered by Status (Admin)
+GET {{baseUrl}}/orders/admin/all?status=crafting&page=1&limit=20
+Authorization: Bearer {{adminToken}}
+
+### 11. Get All Orders - Filtered by User (Admin)
+GET {{baseUrl}}/orders/admin/all?userId=USER_ID_HERE
+Authorization: Bearer {{adminToken}}
+
+### 12. Update Order Status to Crafting (Admin)
+PUT {{baseUrl}}/orders/admin/{{orderId}}/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "crafting",
+  "note": "Order confirmed. Starting production."
+}
+
+### 13. Update Order Status to Shipped (Admin)
+PUT {{baseUrl}}/orders/admin/{{orderId}}/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "shipped",
+  "note": "Package shipped via courier. Tracking: ABC123XYZ"
+}
+
+### 14. Update Order Status to Delivered (Admin)
+PUT {{baseUrl}}/orders/admin/{{orderId}}/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "delivered",
+  "note": "Successfully delivered to customer"
+}
+
+### 15. Test Validation - Missing Product ID
+POST {{baseUrl}}/orders/custom
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "customSpecs": {},
+  "etaDays": 14
+}
+
+### 16. Test Validation - Invalid Product ID Format
+POST {{baseUrl}}/orders/custom
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "productId": "invalid-id",
+  "customSpecs": {},
+  "etaDays": 14
+}
+
+### 17. Test Validation - ETA Too High
+POST {{baseUrl}}/orders/custom
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "productId": "{{productId}}",
+  "customSpecs": {},
+  "etaDays": 100
+}
+
+### 18. Test Validation - Invalid Status Update (Admin)
+PUT {{baseUrl}}/orders/admin/{{orderId}}/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "invalid_status",
+  "note": "This should fail"
+}
+
+### 19. Test Authorization - Create Order Without Token (Should Fail)
+POST {{baseUrl}}/orders/custom
+Content-Type: application/json
+
+{
+  "productId": "{{productId}}",
+  "customSpecs": {},
+  "etaDays": 14
+}
+
+### 20. Test Authorization - Admin Route as User (Should Fail)
+GET {{baseUrl}}/orders/admin/all
+Authorization: Bearer {{userToken}}
+
+### 21. Create Order with Invalid Custom Specs (Should Fail Validation)
+POST {{baseUrl}}/orders/custom
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "productId": "{{productId}}",
+  "customSpecs": {
+    "size": "XXXL",
+    "color": "InvalidColor"
+  },
+  "etaDays": 14
+}
+
+### 22. Get Order Statistics (Admin) - To be implemented
+GET {{baseUrl}}/orders/admin/stats
+Authorization: Bearer {{adminToken}}
+
+## =====================================================================
+## PAYMENT ENDPOINTS - Paystack Integration
+## =====================================================================
+
+### Payment: 1. Payment Service Health Check
+GET {{baseUrl}}/payment/health
+
+### Payment: 2. Initialize Payment (Required for any order)
+POST {{baseUrl}}/payment/initialize
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "orderId": "507f1f77bcf86cd799439011",
+  "amount": 15000
+}
+
+### Payment: 3. Verify Payment Transaction
+POST {{baseUrl}}/payment/verify/your-transaction-reference-here
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+### Payment: 4. Test Payment Initialization - Invalid Order ID
+POST {{baseUrl}}/payment/initialize
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "orderId": "invalid-id",
+  "amount": 15000
+}
+
+### Payment: 5. Test Payment Initialization - Negative Amount
+POST {{baseUrl}}/payment/initialize
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "orderId": "507f1f77bcf86cd799439011",
+  "amount": -5000
+}
+
+### Payment: 6. Test Payment Initialization - Amount Too High
+POST {{baseUrl}}/payment/initialize
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "orderId": "507f1f77bcf86cd799439011",
+  "amount": 600000
+}
+
+### Payment: 7. Test Payment Verification - Invalid Reference
+POST {{baseUrl}}/payment/verify/invalid-ref
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+### Payment: 8. Payment Initialization Without Auth (Should Fail)
+POST {{baseUrl}}/payment/initialize
+Content-Type: application/json
+
+{
+  "orderId": "507f1f77bcf86cd799439011",
+  "amount": 15000
+}
+
+### Payment: 9. Simulate Paystack Webhook - Successful Charge
+POST {{baseUrl}}/payment/webhook
+Content-Type: application/json
+X-Paystack-Signature: your-signature-here
+
+{
+  "event": "charge.success",
+  "data": {
+    "id": 1234567890,
+    "reference": "ref-12345",
+    "amount": 1500000,
+    "paid_at": "2025-12-18T10:30:00Z",
+    "status": "success",
+    "customer": {
+      "id": 1,
+      "email": "customer@test.com",
+      "customer_code": "CUS_abc123"
+    },
+    "authorization": {
+      "authorization_code": "AUTH_xyz789",
+      "bin": "412345",
+      "last4": "5678",
+      "exp_month": "12",
+      "exp_year": "25",
+      "channel": "card",
+      "card_type": "visa",
+      "bank": "Test Bank",
+      "country_code": "NG",
+      "brand": "visa",
+      "should_reauthorize": false
+    },
+    "metadata": {
+      "orderId": "507f1f77bcf86cd799439011"
+    }
+  }
+}
+
+### Payment: 10. Simulate Paystack Webhook - Failed Charge
+POST {{baseUrl}}/payment/webhook
+Content-Type: application/json
+X-Paystack-Signature: your-signature-here
+
+{
+  "event": "charge.failed",
+  "data": {
+    "id": 1234567891,
+    "reference": "ref-12346",
+    "amount": 1500000,
+    "status": "failed",
+    "gateway_response": "Insufficient funds",
+    "customer": {
+      "id": 2,
+      "email": "customer2@test.com"
+    }
+  }
 }

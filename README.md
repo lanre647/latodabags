@@ -74,13 +74,16 @@ handmade-bags-ecommerce/
 │   │   ├── errorHandler.js         # Global error handler
 │   │   ├── rateLimiter.js          # Rate limiting
 │   │   ├── validation.js           # Request validation
+│   │   ├── productValidation.js    # Product request validation
+│   │   ├── orderValidation.js      # Order request validation
 │   │   └── security.js             # Security headers
 │   ├── models/
-│   │   ├── User.js
+│   │   ├── user.js
 │   │   ├── product.js
-│   │   ├── Order.js
-│   │   ├── Category.js
-│   │   └── Review.js
+│   │   ├── order.js
+│   │   ├── category.js
+│   │   ├── review.js
+│   │   └── bag.js
 │   ├── routes/
 │   │   ├── auth.js
 │   │   ├── products.js
@@ -93,20 +96,24 @@ handmade-bags-ecommerce/
 │   │   ├── productController.js
 │   │   ├── orderController.js
 │   │   ├── userController.js
+│   │   ├── bagController.js
 │   │   └── paymentController.js
 │   ├── services/
-│   │   ├── paystackService.js
+│   │   ├── paystackService.js      # Paystack API client
 │   │   ├── emailService.js
 │   │   └── uploadService.js
 │   ├── utils/
 │   │   ├── logger.js
 │   │   ├── jwt.js
 │   │   └── validators.js
+│   ├── doc/
+│   │   └── test-products.http      # API test requests
 │   ├── bin/
 │   │   └── www                     # Server startup script
 │   ├── .env
 │   ├── .env.example
 │   ├── server.js                   # Main app file
+│   ├── PAYSTACK_INTEGRATION.md     # Payment integration guide
 │   └── package.json
 │
 ├── .gitignore
@@ -177,18 +184,21 @@ REACT_APP_PAYSTACK_PUBLIC_KEY=pk_test_your_key_here
 ## 🔑 Getting API Keys
 
 ### MongoDB Atlas
+
 1. Visit [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 2. Create a free cluster
 3. Create a database user
 4. Get connection string with `retryWrites=true` parameter
 
 ### Paystack (Nigeria)
+
 1. Visit [Paystack Dashboard](https://dashboard.paystack.com)
 2. Sign up/Login
 3. Navigate to Settings > API Keys & Webhooks
 4. Copy your test keys (use live keys for production)
 
 ### Cloudinary
+
 1. Visit [Cloudinary](https://cloudinary.com)
 2. Sign up for free account
 3. Get credentials from Dashboard
@@ -198,12 +208,14 @@ REACT_APP_PAYSTACK_PUBLIC_KEY=pk_test_your_key_here
 ### Development Mode
 
 **Terminal 1 - Server:**
+
 ```bash
 cd server
 npm run dev
 ```
 
 **Terminal 2 - Client:**
+
 ```bash
 cd client
 npm start
@@ -212,12 +224,14 @@ npm start
 ### Production Mode
 
 **Server:**
+
 ```bash
 cd server
 npm start
 ```
 
 **Client:**
+
 ```bash
 cd client
 npm run build
@@ -227,31 +241,39 @@ npm run build
 ## 🔍 API Endpoints
 
 ### Health Check
-- `GET /health` - Server health status
 
-### Authentication (Coming)
+- `GET /health` - Server health status
+- `GET /api/v1/payment/health` - Payment service health
+
+### Authentication
+
 - `POST /api/v1/auth/register` - Register new user
 - `POST /api/v1/auth/login` - User login
 - `GET /api/v1/auth/logout` - User logout
 - `GET /api/v1/auth/me` - Get current user
 
-### Bags (Coming)
-- `GET /api/v1/bags` - Get all bags
-- `GET /api/v1/bags/:id` - Get single bag
-- `POST /api/v1/bags` - Create bag (Admin)
-- `PUT /api/v1/bags/:id` - Update bag (Admin)
-- `DELETE /api/v1/bags/:id` - Delete bag (Admin)
+### Products
 
-### Orders (Coming)
-- `GET /api/v1/orders` - Get user orders
+- `GET /api/v1/products` - Get all products with filters
+- `GET /api/v1/products/:id` - Get single product
+- `POST /api/v1/products` - Create product (Admin only)
+- `PUT /api/v1/products/:id` - Update product (Admin only)
+- `DELETE /api/v1/products/:id` - Delete product (Admin only)
+
+### Orders
+
+- `POST /api/v1/orders/custom` - Create custom order
+- `GET /api/v1/orders/my` - Get user orders
 - `GET /api/v1/orders/:id` - Get single order
-- `POST /api/v1/orders` - Create order
-- `PUT /api/v1/orders/:id` - Update order status (Admin)
+- `PUT /api/v1/orders/:id/cancel` - Cancel pending order
+- `GET /api/v1/orders/admin/all` - Get all orders (Admin only)
+- `PUT /api/v1/orders/admin/:id/status` - Update order status (Admin only)
 
-### Payments (Coming)
-- `POST /api/v1/payments/initialize` - Initialize Paystack payment
-- `GET /api/v1/payments/verify/:reference` - Verify payment
-- `POST /api/v1/payments/webhook` - Paystack webhook
+### Payments (Paystack)
+
+- `POST /api/v1/payment/initialize` - Initialize payment transaction
+- `POST /api/v1/payment/verify/:reference` - Verify payment status
+- `POST /api/v1/payment/webhook` - Paystack webhook handler
 
 ## 🔒 Security Features
 
