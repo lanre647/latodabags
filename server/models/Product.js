@@ -18,7 +18,7 @@ const ProductSchema = new mongoose.Schema(
       type: [String],
       required: [true, 'At least one image is required'],
       validate: {
-        validator: function(arr) {
+        validator: function (arr) {
           return arr && arr.length > 0;
         },
         message: 'Product must have at least one image',
@@ -43,7 +43,7 @@ const ProductSchema = new mongoose.Schema(
           options: {
             type: [String],
             validate: {
-              validator: function(arr) {
+              validator: function (arr) {
                 // Options array required only for 'select' and 'color' types
                 if (this.type === 'select' || this.type === 'color') {
                   return arr && arr.length > 0;
@@ -109,6 +109,11 @@ ProductSchema.index({ category: 1, createdAt: -1 });
 ProductSchema.index({ featured: 1, createdAt: -1 });
 ProductSchema.index({ name: 'text', description: 'text' });
 
+// Virtual to expose _id as id for frontend routing
+ProductSchema.virtual('id').get(function () {
+  return this._id.toString();
+});
+
 // Virtual for reviews
 ProductSchema.virtual('reviews', {
   ref: 'Review',
@@ -118,7 +123,7 @@ ProductSchema.virtual('reviews', {
 });
 
 // Method to calculate final price with custom options
-ProductSchema.methods.calculatePrice = function(selectedOptions = {}) {
+ProductSchema.methods.calculatePrice = function (selectedOptions = {}) {
   let finalPrice = this.basePrice;
 
   // Add price modifiers from selected custom options
@@ -132,7 +137,10 @@ ProductSchema.methods.calculatePrice = function(selectedOptions = {}) {
 };
 
 // Static method to get products with pagination
-ProductSchema.statics.getPaginated = async function(filters = {}, options = {}) {
+ProductSchema.statics.getPaginated = async function (
+  filters = {},
+  options = {}
+) {
   const {
     page = 1,
     limit = 12,

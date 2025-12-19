@@ -83,6 +83,9 @@ app.use(compression());
 // Rate Limiting - Apply to all routes
 app.use(rateLimiterMiddleware);
 
+// Static Files - Serve public folder
+app.use('/public', express.static('public'));
+
 // Health Check Endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({

@@ -38,12 +38,12 @@ exports.getProducts = async (req, res) => {
       if (maxPrice) filters.basePrice.$lte = Number(maxPrice);
     }
 
-    // Get paginated results - exclude _id from list
+    // Get paginated results
     const result = await Product.getPaginated(filters, {
       page: Number(page),
       limit: Number(limit),
       sort,
-      select: '-_id -__v', // Exclude _id and __v from list
+      select: '-__v', // Exclude __v from list, keep _id for frontend routing
     });
 
     res.status(200).json({
@@ -67,9 +67,7 @@ exports.getProducts = async (req, res) => {
 // @access  Public
 exports.getProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id)
-      .select('-__v')
-      .populate('reviews');
+    const product = await Product.findById(req.params.id).select('-__v');
 
     if (!product) {
       return res.status(404).json({
@@ -106,7 +104,15 @@ exports.getProduct = async (req, res) => {
 // @access  Private/Admin
 exports.createProduct = async (req, res) => {
   try {
-    const { name, basePrice, images, customOptions, description, category, featured } = req.body;
+    const {
+      name,
+      basePrice,
+      images,
+      customOptions,
+      description,
+      category,
+      featured,
+    } = req.body;
 
     // Add creator to product
     const productData = {
@@ -142,7 +148,15 @@ exports.createProduct = async (req, res) => {
 // @access  Private/Admin
 exports.updateProduct = async (req, res) => {
   try {
-    const { name, basePrice, images, customOptions, description, category, featured } = req.body;
+    const {
+      name,
+      basePrice,
+      images,
+      customOptions,
+      description,
+      category,
+      featured,
+    } = req.body;
 
     // Fields allowed to update
     const updateData = {};
@@ -154,14 +168,10 @@ exports.updateProduct = async (req, res) => {
     if (category !== undefined) updateData.category = category;
     if (featured !== undefined) updateData.featured = featured;
 
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!product) {
       return res.status(404).json({

@@ -73,9 +73,6 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-// Create index on email for faster lookups
-UserSchema.index({ email: 1 });
-
 // Hash password before saving - bcrypt salt rounds 13
 UserSchema.pre('save', async function (next) {
   // Only hash password if it has been modified

@@ -42,13 +42,13 @@ handmade-bags-ecommerce/
 │   │   │   ├── checkout/
 │   │   │   └── common/
 │   │   ├── pages/
-│   │   │   ├── Home.js
-│   │   │   ├── BagDetails.js
-│   │   │   ├── Cart.js
-│   │   │   ├── Checkout.js
-│   │   │   ├── Login.js
-│   │   │   ├── Register.js
-│   │   │   └── Profile.js
+│   │   │   ├── Home.jsx
+│   │   │   ├── BagDetails.jsx
+│   │   │   ├── Cart.jsx
+│   │   │   ├── Checkout.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   └── Profile.jsx
 │   │   ├── services/
 │   │   │   ├── api.js
 │   │   │   ├── auth.js
@@ -58,8 +58,8 @@ handmade-bags-ecommerce/
 │   │   │   └── CartContext.js
 │   │   ├── utils/
 │   │   │   └── validators.js
-│   │   ├── App.js
-│   │   └── index.js
+│   │   ├── App.jsx
+│   │   └── index.jsx
 │   ├── .env
 │   ├── .env.example
 │   └── package.json
